@@ -1,0 +1,248 @@
+openapi: "3.0.0"
+info:
+  title: Ecom Store API
+  description: API collection for ecommerce app
+  version: 1.1.0
+  contact:
+    email: jatinchourasia3@gmail.com
+    url: "http://jatinchourasia.me/portfolio"
+
+# servers:
+#   - url: "https://localhost:4000/api/v1"
+#     description: for local host -secure
+#   - url: "http://localhost:4000/api/v1"
+#     description: for local host -regular
+
+servers:
+  - url: "{protocol}://localhost:4000/api/{version}"
+    description: for local host -secure
+    variables:
+      version:
+        enum:
+          - v1
+          - v2
+        default: v1
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+  /anime:
+    get:
+      tags:
+        - String
+      summary: return greetings
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "mystring"
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+  /animeObject:
+    get:
+      tags:
+        - Object
+      summary: return collection object
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  price:
+                    type: number
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /content:
+    get:
+      tags:
+        - Array
+      summary: return collection of content
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    price:
+                      type: number
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /content/{animeId}:
+    get:
+      tags:
+        - Parameters
+      summary: return content based on requiest id
+      parameters:
+        - name: animeId
+          in: path
+          required: true
+          default: 1
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  price:
+                    type: number
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /addContent:
+    post:
+      tags:
+        - Parameters
+      summary: add anime to content
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                price:
+                  type: number
+
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /contentquery:
+    get:
+      tags:
+        - Query
+      summary: getting query
+
+      parameters:
+        - name: genera
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [action, shonen, mestry]
+        - name: season
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [fall, spring, summer]
+
+      responses:
+        200:
+          description: Sucesss
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  genera:
+                    type: string
+                  season:
+                    type: string
+
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /contentUpload:
+    post:
+      tags:
+        - Upload
+      summary: upload content image
+      parameters:
+        - in: header
+          name: auth
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+
+      responses:
+        200:
+          description: Sucesss
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+
+        400:
+          description: Bad request
+        500:
+          description: internal server error
