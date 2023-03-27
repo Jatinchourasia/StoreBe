@@ -24,7 +24,6 @@ exports.signup = BigPromise(async (req, res, next) => {
     width: 300,
     crop: "scale",
   });
-  console.log(result);
 
   const user = await User.create({
     name,
@@ -37,4 +36,49 @@ exports.signup = BigPromise(async (req, res, next) => {
   });
 
   cookieToken(user, res);
+});
+//login
+exports.login = BigPromise(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // check for presence of email and password
+  if (!email || !password) {
+    return next(new CustomError("please provide email and password", 400));
+  }
+
+  // get user from DB
+  const user = await User.findOne({ email }).select("+password");
+
+  // if user not found in DB
+  if (!user) {
+    return next(
+      new CustomError("Email or password does not match or exist", 400)
+    );
+  }
+
+  // match the password
+  const isPasswordCorrect = await user.isValidatedPassword(password);
+
+  //if password do not match
+  if (!isPasswordCorrect) {
+    return next(
+      new CustomError("Email or password does not match or exist", 400)
+    );
+  }
+
+  // if all goes good and we send the token
+  cookieToken(user, res);
+});
+
+exports.logout = BigPromise(async (req, res, next) => {
+  //clear the cookie
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    succes: true,
+    message: "Logout success",
+  });
 });
