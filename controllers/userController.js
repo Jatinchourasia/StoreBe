@@ -21,7 +21,7 @@ exports.signup = BigPromise(async (req, res, next) => {
 
   const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
     folder: "users",
-    width: 150,
+    width: 300,
     crop: "scale",
   });
   console.log(result);
