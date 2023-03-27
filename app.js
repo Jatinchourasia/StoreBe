@@ -14,16 +14,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //cookie and filkeupload
 app.use(cookieParser());
-app.use(fileUpload());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
+//temp check
+app.set("view engine", "ejs");
 //morgan logger
 app.use(morgan("tiny"));
 
 //routes
 
 const home = require("./routes/home");
+const user = require("./routes/user");
 
 //router middlewares
 
 app.use("/api/v1", home);
+app.use("/api/v1", user);
+app.use("/signuptest", (req, res) => {
+  res.render("signuptest");
+});
 
 module.exports = app;
