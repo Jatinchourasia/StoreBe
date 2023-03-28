@@ -3,6 +3,8 @@ const BigPromise = require("../middlewares/bigPromise");
 const CustomError = require("../utils/customError");
 const cookieToken = require("../utils/cookieToken");
 const cloudinary = require("cloudinary");
+const mailHelper = require("../utils/emailHelper");
+const crypto = require("crypto");
 
 exports.signup = BigPromise(async (req, res, next) => {
   //let result;
@@ -37,7 +39,7 @@ exports.signup = BigPromise(async (req, res, next) => {
 
   cookieToken(user, res);
 });
-//login
+
 exports.login = BigPromise(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -81,4 +83,68 @@ exports.logout = BigPromise(async (req, res, next) => {
     succes: true,
     message: "Logout success",
   });
+});
+
+exports.forgotPassword = BigPromise(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new CustomError("Email not found as registered", 400));
+  }
+  const forgotToken = user.getForgetPasswordToken();
+  //validateBeforeSave: its not gonna check anything and directly gonna save the data to db
+  await user.save({ validateBeforeSave: false });
+
+  const myUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/password/reset/${forgotToken}`;
+
+  const message = `Copy paste this link in your URL and hit enter \n\n ${myUrl} `;
+
+  try {
+    await mailHelper({
+      email: user.email,
+      subject: "Password reset email",
+      message,
+    });
+    res.status(200).json({
+      sucess: true,
+      message: "email sent successfully",
+    });
+  } catch (error) {
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new CustomError(error.message, 500));
+  }
+});
+
+exports.passwordReset = BigPromise(async (req, res, next) => {
+  const token = req.params.token;
+
+  // hash the token as db also stores the hashed version
+  const encryToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  //finding user based on encry token and expiry time should be greater then current time
+
+  const user = await User.findOne({
+    forgotPasswordToken: encryToken,
+    forgotPasswordExpiry: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new CustomError("token is invalid or expired", 400));
+  }
+
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(
+      new CustomError("password and confirm password do not match", 400)
+    );
+  }
+
+  user.password = req.body.password;
+  user.forgotPasswordToken = undefined;
+  user.forgotPasswordExpiry = undefined;
+  await user.save();
+
+  cookieToken(user, res);
 });

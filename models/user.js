@@ -64,14 +64,14 @@ userSchema.methods.getJwtToken = function () {
 };
 
 //generate forgot password token
-userSchema.methods.getForgetPAsswordToken = function () {
+userSchema.methods.getForgetPasswordToken = function () {
   //generate random string
   const forgotToken = crypto.randomBytes(20).toString("hex");
 
   this.forgotPasswordToken = crypto
     .createHash("sha256")
     .update(forgotToken)
-    .digest("hax");
+    .digest("hex");
 
   this.forgotPasswordExpiry = Date.now() + 20 * 60 * 1000;
 
