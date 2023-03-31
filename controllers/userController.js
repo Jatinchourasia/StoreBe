@@ -175,3 +175,118 @@ exports.changePassword = BigPromise(async (req, res, next) => {
   await user.save();
   cookieToken(user, res);
 });
+
+exports.updateUserDetails = BigPromise(async (req, res, next) => {
+  // collect data from body
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  // if photo comes to us
+  if (req.files) {
+    const user = await User.findById(req.user.id);
+
+    const imageId = user.photo.id;
+
+    // delete photo on cloudinary
+    const resp = await cloudinary.v2.uploader.destroy(imageId);
+
+    // upload the new photo
+    const result = await cloudinary.v2.uploader.upload(
+      req.files.photo.tempFilePath,
+      {
+        folder: "users",
+        width: 150,
+        crop: "scale",
+      }
+    );
+
+    // add photo data in newData object
+    newData.photo = {
+      id: result.public_id,
+      secure_url: result.secure_url,
+    };
+  }
+
+  // update the data in user
+  const user = await User.findByIdAndUpdate(req.user.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+//special routes
+exports.adminAllUser = BigPromise(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+exports.admingetOneUser = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    next(new CustomError("No user found", 400));
+  }
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+exports.adminUpdateOneUserDetails = BigPromise(async (req, res, next) => {
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  // update the user in database
+  const user = await User.findByIdAndUpdate(req.params.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+exports.adminDeleteOneUser = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new CustomError("No Such user found", 401));
+  }
+
+  // get image id from user in database
+  const imageId = user.photo.id;
+
+  // delete image from cloudinary
+  await cloudinary.v2.uploader.destroy(imageId);
+
+  // remove user from databse
+  await user.remove();
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+exports.managerAllUser = BigPromise(async (req, res, next) => {
+  const users = await User.find({ role: "user" });
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
