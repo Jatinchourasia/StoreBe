@@ -10,8 +10,6 @@ exports.home = BigPromise(async (req, res) => {
 
 exports.homeDummy = async (req, res) => {
   try {
-    // const db = await something()
-
     res.status(200).json({
       success: true,
       greeting: "this is another dummy route",
