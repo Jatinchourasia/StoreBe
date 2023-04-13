@@ -5,18 +5,18 @@ const mailHelper = async (option) => {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     auth: {
-      user: process.env.SMTP_USER, // generated ethereal user
-      pass: process.env.SMTP_PASS, // generated ethereal password
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 
   // send mail with defined transport object
   const message = {
-    from: '"Fred Foo 👻" <foo@example.com>', // sender address
+    from: '"Plants & Home🪴" <Plants&Home@gmamil.com>', // sender address
     to: option.email, // list of receivers
     subject: option.subject, // Subject line
     text: option.message, // plain text body
-    html: "<b>Hello world?</b>", // html body
+    html: "<b>Plants & Home🪴</b>", // html body
   };
   let info = await transporter.sendMail(message);
 };
