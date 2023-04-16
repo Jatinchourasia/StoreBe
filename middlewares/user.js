@@ -2,6 +2,7 @@ const User = require("../models/user");
 const BigPromise = require("../middlewares/bigPromise");
 const CustomError = require("../utils/customError");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 
 exports.isLoggedIn = BigPromise(async (req, res, next) => {
   // check token first in cookies
@@ -21,6 +22,10 @@ exports.isLoggedIn = BigPromise(async (req, res, next) => {
   req.user = await User.findById(decoded.id);
 
   next();
+});
+
+exports.oAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
 });
 
 exports.customRole = (...roles) => {

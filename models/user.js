@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please provide a name"],
     maxlength: [40, "name should be under 40 characters"],
   },
+  googleId: {
+    type: String,
+  },
   email: {
     type: String,
     required: [true, "Please provide an email"],

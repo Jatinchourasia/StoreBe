@@ -13,6 +13,7 @@ const {
   managerAllUser,
 } = require("../controllers/userController");
 const { isLoggedIn, customRole } = require("../middlewares/user");
+
 router.route("/signup").post(signup);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
