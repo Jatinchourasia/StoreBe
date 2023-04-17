@@ -13,7 +13,7 @@ exports.capturePayment = BigPromise(async (req, res, next) => {
   });
 
   const Order = await instance.orders.create({
-    amount: req.body.amount,
+    amount: req.body.amount * 100,
     currency: "INR",
     receipt: "receipt#1",
     notes: {
