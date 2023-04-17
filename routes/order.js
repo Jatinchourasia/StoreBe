@@ -4,3 +4,5 @@ const router = express.Router();
 const { isLoggedIn } = require("../middlewares/user");
 
 router.route("/order/create").post(isLoggedIn, createOrder);
+
+module.exports = router;
