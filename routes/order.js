@@ -1,7 +1,14 @@
 const express = require("express");
-const { createOrder } = require("../controllers/orderController");
+const {
+  createOrder,
+  getOneOrder,
+  getLoggedInOrders,
+  admingetAllOrders,
+  adminUpdateOrder,
+  adminDeleteOrder,
+} = require("../controllers/orderController");
 const router = express.Router();
-const { isLoggedIn } = require("../middlewares/user");
+const { isLoggedIn, customRole } = require("../middlewares/user");
 
 router.route("/order/create").post(isLoggedIn, createOrder);
 router.route("/order/:id").get(isLoggedIn, getOneOrder);
