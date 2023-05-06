@@ -26,12 +26,12 @@ servers:
         enum:
           - localhost:4000
           - jade-clam-hose.cyclic.app
-        default: localhost:4000
+        default: jade-clam-hose.cyclic.app
       protocol:
         enum:
           - http
           - https
-        default: http
+        default: https
 
 components:
   securitySchemes:
