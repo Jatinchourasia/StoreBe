@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
  * description
  * photos[]
  * category
+ * gender
  * brand
  * stock
  * sizes
@@ -55,12 +56,20 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [
       true,
-      "please select category ONLY from - plants, seeds, Pots & Planters, Plant care",
+      "please select category ONLY from - casual, formal, sportswear & footwear",
     ],
     enum: {
-      values: ["plants", "seeds", "potsPlanters", "plantCare"],
+      values: ["casual", "formal", "sportswear", "footwear"],
       message:
-        "please select category ONLY from - plants, seeds, Pots & Planters, Plant care",
+        "please select category ONLY from - casual, formal, sportswear & footwear",
+    },
+  },
+  gender: {
+    type: String,
+    required: [true, "please select gender ONLY from - Men Women or unisex "],
+    enum: {
+      values: ["Men", "Women", "Women"],
+      message: "please select gender ONLY from - Men, Women & Women",
     },
   },
   stock: {

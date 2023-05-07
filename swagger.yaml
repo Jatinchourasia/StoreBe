@@ -667,6 +667,8 @@ paths:
                           type: string
                         category:
                           type: string
+                        gender:
+                          type: string
                         sizes:
                           type: array
                           items:
@@ -744,6 +746,8 @@ paths:
                         type: string
                       category:
                         type: string
+                      gender:
+                        type: string
                       sizes:
                         type: array
                         items:
@@ -818,6 +822,8 @@ paths:
                           type: string
                         category:
                           type: string
+                        gender:
+                          type: string
                         sizes:
                           type: array
                           items:
@@ -876,6 +882,7 @@ paths:
                 - price
                 - description
                 - category
+                - gender
                 - sizes
                 - stock
                 - brand
@@ -893,7 +900,11 @@ paths:
                 category:
                   type: string
                   required: true
-                  enum: [plants, seeds, potsPlanters, PlantCare]
+                  enum: [casual, formal, sportswear, footwear]
+                gender:
+                  type: string
+                  required: true
+                  enum: [men, women, unisex]
                 sizes:
                   type: array
                   required: true
@@ -933,6 +944,8 @@ paths:
                       description:
                         type: string
                       category:
+                        type: string
+                      gender:
                         type: string
                       brand:
                         type: string
@@ -993,6 +1006,7 @@ paths:
                 - price
                 - description
                 - category
+                - gender
                 - stock
                 - brand
               properties:
@@ -1008,7 +1022,11 @@ paths:
                 category:
                   type: string
                   required: true
-                  enum: [plants, seeds, potsPlanters, PlantCare]
+                  enum: [casual, formal, sportswear, footwear]
+                gender:
+                  type: string
+                  required: true
+                  enum: [men, women, unisex]
                 stock:
                   type: number
                   required: true
@@ -1043,6 +1061,8 @@ paths:
                       description:
                         type: string
                       category:
+                        type: string
+                      gender:
                         type: string
                       brand:
                         type: string
